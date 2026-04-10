@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Dashboard Banner</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #ffffff;
+            /* Using a semi-transparent white layer over the GIF to give it a faded/transparent effect */
+            /* background-image: linear-gradient(rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.8)), url('bg.gif'); */
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .interactive-banner-container {
+            max-width: 1200px;
+            /* Adjust according to your maximum container width */
+            margin: 0 auto;
+            position: relative;
+            /* box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15); */
+            border-radius: 12px;
+            overflow: hidden;
+            /* background: #212529; */
+            /* Ensures container collapses correctly around the image */
+            line-height: 0;
+        }
+
+        .main-image {
+            width: 100%;
+            height: auto;
+            display: block;
+            transition: opacity 0.2s ease-in-out;
+        }
+
+        /* 
+           Hotspot styling 
+           We use absolute positioning with percentages so it remains responsive.
+           Adjust the width and height/top values to perfectly match your specific image's sidebar navigation.
+           
+           IMPORTANT: To find the right positions, uncomment the background/border styling safely below.
+        */
+        .hotspot {
+            position: absolute;
+            left: 0;
+            /* Assuming sidebar is on the left edge */
+            width: 95px;
+            height: 18px;
+            /* Adjust this to match the sidebar width (e.g., 18%, 20%, 25%) */
+            cursor: pointer;
+            z-index: 10;
+            /* background-color: #1414146e; */
+
+            /* UNCOMMENT THE PROPS BELOW FOR DEBUGGING/POSITIONING */
+            /* background: rgba(0, 123, 255, 0.3); border: 2px solid #007bff; */
+        }
+
+        /* Subtle interactive effect to signify it's clickable */
+        .hotspot:hover {
+            background: rgba(255, 255, 255, 0.05);
+            /* Slight lightening on hover */
+        }
+
+        /* 
+           Define the top position and height for each navigation item on your sidebar.
+           These are percentage-based so they scale perfectly on smaller/larger screens.
+        */
+        #nav-item-1 {
+            top: 204px;
+            left: 281px;
+        }
+
+        #nav-item-2 {
+            top: 226px;
+            left: 281px;
+        }
+
+        #nav-item-3 {
+            top: 247px;
+            left: 281px;
+        }
+
+        #nav-item-4 {
+            top: 267px;
+            left: 281px;
+        }
+
+        #nav-item-5 {
+            top: 288px;
+            left: 281px;
+        }
+
+        #nav-item-6 {
+            top: 308px;
+            left: 281px;
+        }
+
+        #nav-item-7 {
+            top: 329px;
+            left: 281px;
+        }
+
+        #nav-item-8 {
+            top: 349px;
+            left: 281px;
+        }
+
+        #nav-item-9 {
+            top: 371px;
+            left: 281px;
+        }
+
+        #nav-item-10 {
+            top: 392px;
+            left: 281px;
+        }
+
+        #nav-item-11 {
+            top: 413px;
+            left: 281px;
+        }
+
+        #nav-item-12 {
+            top: 434px;
+            left: 281px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <section class="py-3">
+        <div class="container">
+
+
+            <!-- Interactive Banner Context -->
+            <div class="interactive-banner-container">
+                <!-- The main display image. Set your default active image here. -->
+                <img src="15.png" alt="Dashboard View" id="dashboardImage" class="main-image">
+
+                <!-- 
+                   Hotspots mapping to different images.
+                   'data-image' attribute holds the URL of the image that should appear.
+                -->
+                <div class="hotspot" id="nav-item-1" data-image="15.png"></div>
+                <div class="hotspot" id="nav-item-2" data-image="16.png"></div>
+                <div class="hotspot" id="nav-item-3" data-image="17.png"></div>
+                <div class="hotspot" id="nav-item-4" data-image="18.png"></div>
+                <div class="hotspot" id="nav-item-5" data-image="19.png"></div>
+                <div class="hotspot" id="nav-item-6" data-image="20.png"></div>
+                <div class="hotspot" id="nav-item-7" data-image="21.png"></div>
+                <div class="hotspot" id="nav-item-8" data-image="22.png"></div>
+                <div class="hotspot" id="nav-item-9" data-image="23.png"></div>
+                <div class="hotspot" id="nav-item-10" data-image="24.png"></div>
+                <div class="hotspot" id="nav-item-11" data-image="25.png"></div>
+                <div class="hotspot" id="nav-item-12" data-image="26.png"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Bootstrap 5 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const dashboardImage = document.getElementById('dashboardImage');
+            const hotspots = document.querySelectorAll('.hotspot');
+
+            // The image that is currently "locked in" by the user's click
+            let activeImageSrc = '15.png';
+
+            // Preload all the images so there's no flicker/delay on first hover
+            const imagesToPreload = [];
+            hotspots.forEach(spot => {
+                const src = spot.getAttribute('data-image');
+                if (src) {
+                    const img = new Image();
+                    img.src = src;
+                    imagesToPreload.push(img);
+                }
+            });
+
+            // Handle hover and click interactions for the hotspots
+            hotspots.forEach(hotspot => {
+                const targetImageSrc = hotspot.getAttribute('data-image');
+
+                // Interaction: Mouse Enter (Hover) - temporarily preview
+                hotspot.addEventListener('mouseenter', () => {
+                    updateImage(targetImageSrc);
+                });
+
+                // Interaction: Click - lock in the image
+                hotspot.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    activeImageSrc = targetImageSrc; // Keep this image locked
+                    updateImage(targetImageSrc);
+                });
+            });
+
+            // Revert back to the locked active image when the mouse leaves the banner entirely
+            const bannerContainer = document.querySelector('.interactive-banner-container');
+            bannerContainer.addEventListener('mouseleave', () => {
+                updateImage(activeImageSrc);
+            });
+
+            // Helper function to handle smooth image transitions
+            function updateImage(newSrc) {
+                if (dashboardImage.src.endsWith(newSrc)) return; // Don't change if already active
+
+                // Slight fade effect
+                dashboardImage.style.opacity = '0.9';
+                setTimeout(() => {
+                    dashboardImage.src = newSrc;
+                    dashboardImage.style.opacity = '1';
+                }, 80);
+            }
+        });
+    </script>
+</body>
+
+</html>
